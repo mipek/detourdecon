@@ -1,0 +1,10 @@
+## todo
+- memory hacking api(memory pattern matching)
+- parameterize registers in DetourGenContext?
+- remove detour, kill detourmanager
+- copy prototype_t
+- variadic args support
+- __fastcall support
+- __thiscall support
+- returning objects
+- gcc support
