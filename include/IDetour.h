@@ -12,6 +12,10 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
+ *	  
+ *   * Neither the name of the copyright holder nor the names of its contributors
+ *     may be used to endorse or promote products derived from this software
+ *     without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -84,6 +88,29 @@ public:
 	 * @return				Detour type.
 	 */
 	virtual detourtype_e Type() const =0;
+
+	/**
+	 * @brief Returns true when the detour is enabled.
+	 *
+	 * @return				True when the detour is disabled.
+	 */
+	virtual bool IsEnabled() const =0;
+
+	/**
+	 * @brief Changes the detour status.
+	 *
+	 * @param	enabled		True to enable, False to disable the detour.
+	 */
+	virtual void SetStatus(bool enabled) =0;
+
+	void Enable()
+	{
+		SetStatus(true);
+	}
+	void Disable()
+	{
+		SetStatus(false);
+	}
 };
 
 class IDetourCollection
@@ -97,12 +124,19 @@ public:
     virtual byte *Function() const =0;
 
 	/**
+	 * @brief Retrieves the trampoline function.
+	 *
+	 * @return				Trampoline function.
+	 */
+	virtual byte *Trampoline() const =0;
+
+	/**
 	 * @brief Associate a detour with this collection.
 	 *
 	 * @param	cb			Callback
 	 * @param	type		Detouring type.
 	 */
-	virtual void AddDetour(byte *cb, detourtype_e type) =0;
+	virtual IDetour *AddDetour(byte *cb, detourtype_e type) =0;
 
 	/**
 	 * @brief Removes the specified detour from collection and deletes it.
@@ -117,7 +151,7 @@ public:
 	 *
 	 * @param	idx			Index of the detour to remove
 	 */
-	virtual bool RemoveDetour(int idx) =0;
+	virtual bool RemoveDetour(size_t idx) =0;
 
     /**
      * @brief Retrieves a detour instance.
@@ -125,7 +159,7 @@ public:
      * @param   idx         Index of the detour.
      * @return              Detour instance.
      */
-    virtual IDetour *GetDetour(int idx) const =0;
+    virtual IDetour *GetDetour(size_t idx) const =0;
 
     /**
      * @brief Total amount of detours attached to this collection.

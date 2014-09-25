@@ -11,6 +11,7 @@ void CMemHack::Patch(const void *addr, const void *bytes, size_t len)
 
 int CMemHack::AddPattern(const char *pattern, size_t len, OnPatternMatch_t cb)
 {
+	return 0;
 }
 
 void CMemHack::Scan(const void *module, size_t len)

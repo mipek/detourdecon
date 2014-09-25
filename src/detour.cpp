@@ -6,64 +6,83 @@ using namespace ke;
 
 class CDetour : public IDetour
 {
-	byte *m_pDetourFunc;
-	detourtype_e m_eType;
+	byte *detourFunc_;
+	detourtype_e type_;
+	bool enabled_;
 public:
 	CDetour(byte *addr, detourtype_e type):
-	  m_pDetourFunc(addr), m_eType(type)
+	  detourFunc_(addr), type_(type), enabled_(true)
 	{
 	}
 
 	virtual byte *CDetour::Callback() const
 	{
-		return m_pDetourFunc;
+		return detourFunc_;
 	}
 
 	virtual detourtype_e Type() const
 	{
-		return m_eType;
+		return type_;
+	}
+
+	virtual bool IsEnabled() const
+	{
+		return enabled_;
+	}
+
+	virtual void SetStatus(bool enabled)
+	{
+		enabled_ = enabled;
 	}
 };
 
 class CDetourCollection : public IDetourCollection
 {
-	byte *m_pOrigFunc;
-	Vector<IDetour*> m_detours;
-	jmppatch_t m_patch;
+	byte *origfunc_;
+	byte *trampoline_;
+	Vector<IDetour*> detours_;
+	jmppatch_t patch_;
+	friend IDetourCollection *CDetourManager::CreateDetourCollection(byte*, prototype_t*);
 
 	CDetourCollection(byte *func):
-	  m_pOrigFunc(func)
+	  origfunc_(func)
 	{
 	}
 
 public:
 	~CDetourCollection()
 	{
-		Patch_Restore(&m_patch);
-		for(size_t i=0; i<m_detours.length(); ++i)
+		Patch_Restore(&patch_);
+		for(size_t i=0; i<detours_.length(); ++i)
 		{
-			delete m_detours[i];
+			delete detours_[i];
 		}
 	}
 
 	virtual byte *Function() const
 	{
-		return m_pOrigFunc;
+		return origfunc_;
 	}
 
-	virtual void AddDetour(byte *cb, detourtype_e type)
+	virtual byte *Trampoline() const
 	{
-		m_detours.append(new CDetour(cb, type));
+		return trampoline_;
+	}
+
+	virtual IDetour *AddDetour(byte *cb, detourtype_e type)
+	{
+		IDetour *pDetour = static_cast<IDetour*>(new CDetour(cb, type));
+		detours_.append(pDetour);
+		return pDetour;
 	}
 
 	virtual bool RemoveDetour(IDetour *pDetour)
 	{
-		for(size_t i=0; i<m_detours.length(); ++i)
+		for(size_t i=0; i<detours_.length(); ++i)
 		{
-			if(m_detours[i] == pDetour)
+			if(detours_[i] == pDetour)
 			{
-				CDetour *pDetour = static_cast<CDetour*>(m_detours[i]);
-				m_detours.remove(i);
+				detours_.remove(i);
 				delete pDetour;
 				return true;
 			}
@@ -71,14 +90,14 @@ public:
 		return false;
 	}
 
-	virtual bool RemoveDetour(int idx)
+	virtual bool RemoveDetour(size_t idx)
 	{
-		if(idx < m_detours.length())
+		if(idx < detours_.length())
 		{
-			CDetour *pDetour = static_cast<CDetour*>(m_detours[idx]);
+			CDetour *pDetour = static_cast<CDetour*>(detours_[idx]);
 			if(pDetour)
 			{
-				m_detours.remove(idx);
+				detours_.remove(idx);
 				delete pDetour;
 				return true;
 			}
@@ -86,41 +105,24 @@ public:
 		return false;
 	}
 
-	virtual IDetour *GetDetour(int idx) const
+	virtual IDetour *GetDetour(size_t idx) const
 	{
-		if(idx < m_detours.length())
+		if(idx < detours_.length())
 		{
-			return m_detours[idx];
+			return detours_[idx];
 		}
 		return NULL;
 	}
 
 	virtual int DetourCount() const
 	{
-		return m_detours.length();
+		return detours_.length();
 	}
 
 public:
 	void RemoveDetourAll()
 	{
-		m_detours.clear();
-	}
-
-	static CDetourCollection *CreateOnAddress(byte *func, prototype_t *proto)
-	{
-		CDetourCollection *collection = new CDetourCollection(func);
-		Patch_Create(&collection->m_patch, func);
-
-		int status = DetourGen::Generate(func, collection, proto);
-		if(status == DETOURGEN_OK)
-		{
-			return collection;
-		}
-
-		/* Failed to generate detour manager - cleanup. */
-		Patch_Destroy(&collection->m_patch);
-		delete collection;
-		return NULL;
+		detours_.clear();
 	}
 };
 
@@ -169,10 +171,27 @@ IDetourCollection *CDetourManager::Detour(byte *addr, prototype_t *proto)
 	if(!pCollection)
 	{
 		/* No existing collection. Create a new! */
-		pCollection = CDetourCollection::CreateOnAddress(addr, proto);
+		pCollection = CreateDetourCollection(addr, proto);
 		m_collections.append(pCollection);
 	}
 
 	assert(pCollection);
 	return pCollection;
+}
+
+IDetourCollection *CDetourManager::CreateDetourCollection(byte *func, prototype_t *proto)
+{
+	CDetourCollection *collection = new CDetourCollection(func);
+	Patch_Create(&collection->patch_, func);
+
+	int status = DetourGen::Generate(func, this, collection, proto, &collection->trampoline_);
+	if(status == DETOURGEN_OK)
+	{
+		return collection;
+	}
+
+	/* Failed to generate detour manager - cleanup. */
+	Patch_Destroy(&collection->patch_);
+	delete collection;
+	return NULL;
 }

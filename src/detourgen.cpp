@@ -211,7 +211,7 @@ byte *DetourGen::CopyToTrampoline(byte *targetAddr, size_t copySize)
 	return (byte*)pTrampoline;
 }
 
-byte *DetourGen::GenerateManager(byte *targetAddr, byte *trampoline, prototype_t *proto)
+byte *DetourGen::GenerateManager(IDetourManager *pMngrSingleton, byte *targetAddr, byte *trampoline, prototype_t *proto)
 {
 	X86Assembler a(&g_Runtime);
 
@@ -239,8 +239,7 @@ byte *DetourGen::GenerateManager(byte *targetAddr, byte *trampoline, prototype_t
 	a.mov(dword_ptr(ebp, var_detourContext), Detour_Ignored);
 
 	/* Get IDetourManager */
-	IDetourManager *pDetourMngr = IDetourManager::Singleton();
-	a.mov(ecx, (Ptr)pDetourMngr);
+	a.mov(ecx, (Ptr)pMngrSingleton);
 
 	/* Fetch detour collection for 'targetAddr' */
 	a.mov(eax, dword_ptr(ecx));
@@ -359,7 +358,7 @@ void DetourGen::PatchJump(byte *targetAddr, byte *genAddr)
 	// TODO: restore old protection
 }
 
-int DetourGen::Generate(byte *targetAddr, IDetourCollection *pCollection, prototype_t *proto)
+int DetourGen::Generate(byte *targetAddr, IDetourManager *pMngrSingleton, IDetourCollection *pCollection, prototype_t *proto, byte **trampoline)
 {
 	int curSize = 0;
 	CDisasm *disasm = GetDisassembler();
@@ -380,8 +379,8 @@ int DetourGen::Generate(byte *targetAddr, IDetourCollection *pCollection, protot
 	}
 
 	/* Copy the first few bytes(that we're going to overwrite) to a trampoline. */
-	byte *pTrampoline = CopyToTrampoline(targetAddr, curSize);
-	if(!pTrampoline)
+	*trampoline = CopyToTrampoline(targetAddr, curSize);
+	if(!(*trampoline))
 	{
 		return DETOURGEN_OUTOFMEMORY;
 	}
@@ -391,10 +390,10 @@ int DetourGen::Generate(byte *targetAddr, IDetourCollection *pCollection, protot
 	PatchNOP(targetAddr, curSize);
 
 	/* Make the trampoline return to the original function. */
-	PatchJump(pTrampoline + curSize, targetAddr + curSize); 
+	PatchJump(*trampoline + curSize, targetAddr + curSize); 
 
 	/* Redirect the original function to our manager. */
-	PatchJump(targetAddr, GenerateManager(targetAddr, pTrampoline, proto));
+	PatchJump(targetAddr, GenerateManager(pMngrSingleton, targetAddr, *trampoline, proto));
 
 	return DETOURGEN_OK;
 }

@@ -12,6 +12,10 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
+ *	  
+ *   * Neither the name of the copyright holder nor the names of its contributors
+ *     may be used to endorse or promote products derived from this software
+ *     without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,8 +29,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _include_functionproto_h_
-#define _include_functionproto_h_
+#ifndef _include_functioninfo_h_
+#define _include_functioninfo_h_
 
 #include "DetourDecon.h"
 
@@ -65,4 +69,39 @@ typedef struct FuncProto
 	param_t ret;
 } prototype_t;
 
-#endif // _include_functionproto_h_
+template<int P_COUNT>
+class TPrototype
+{
+	param_t paraminf_[P_COUNT];
+	prototype_t proto_;
+	int idx_;
+public:
+	TPrototype(callConv_e x):
+	  idx_(0)
+	{
+		proto_.callconv = x;
+		proto_.paramCount = P_COUNT;
+		proto_.params = paraminf_;
+		proto_.ret.size = 0;
+	}
+	void AddParam(int sz, paramType_e type)
+	{
+		paraminf_[idx_].size = sz;
+		paraminf_[idx_++].type = type;
+	}
+	void SetReturn(int sz, paramType_e type)
+	{
+		proto_.ret.size = sz;
+		proto_.ret.type = type;
+	}
+	void SetReturnNone()
+	{
+		proto_.ret.size = 0;
+	}
+	prototype_t *Prototype()
+	{
+		return proto_;
+	}
+};
+
+#endif //_include_functioninfo_h_

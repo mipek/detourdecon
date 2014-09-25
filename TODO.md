@@ -8,3 +8,4 @@
 - __thiscall support
 - returning objects
 - gcc support
+- detour pausing

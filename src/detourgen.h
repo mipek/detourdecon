@@ -12,6 +12,10 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
+ *	  
+ *   * Neither the name of the copyright holder nor the names of its contributors
+ *     may be used to endorse or promote products derived from this software
+ *     without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -49,12 +53,12 @@
 class DetourGen
 {
 	static byte *CopyToTrampoline(byte *targetAddr, size_t copySize);
-	static byte *GenerateManager(byte *targetAddr, byte *trampoline, prototype_t *proto);
+	static byte *GenerateManager(IDetourManager *pMngrSingleton, byte *targetAddr, byte *trampoline, prototype_t *proto);
 	static void PatchNOP(byte *targetAddr, size_t size);
 	static void PatchJump(byte *targetAddr, byte *genAddr);
 
 public:
-	static int Generate(byte *targetAddr, IDetourCollection *pCollection, prototype_t *proto);
+	static int Generate(byte *targetAddr, IDetourManager *pMngrSingleton, IDetourCollection *pCollection, prototype_t *proto, byte **trampoline);
 	static const char *GetErrorString(int error);
 };
 
