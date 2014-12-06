@@ -9,3 +9,4 @@
 - returning objects
 - gcc support
 - detour pausing
+- copy back params from hook callback (if required)
