@@ -34,6 +34,11 @@ public:
 	{
 		enabled_ = enabled;
 	}
+    
+    virtual void SetType(detourtype_e type)
+    {
+        type_ = type;
+    }
 };
 
 class CDetourCollection : public IDetourCollection

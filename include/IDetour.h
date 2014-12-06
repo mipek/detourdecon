@@ -50,7 +50,7 @@ typedef enum eDetourStatus
 {
     Detour_Ignored,        /**< Don't take any action; call original function. */
     Detour_Handled,        /**< Let other detours know we changed something. */
-    Detour_Override,    /**< Use my return but call original function. */
+    Detour_Override,       /**< Use my return but call original function. */
     Detour_Skip            /**< Use my return, don't call original function. >*/
 } detourstatus_e;
 
@@ -99,6 +99,13 @@ public:
      */
     virtual void SetStatus(bool enabled) =0;
 
+    /**
+     * @brief Changes the type of the detour
+     *
+     * @param    type           New detour type
+     */
+    virtual void SetType(detourtype_e type) =0;
+    
     void Enable()
     {
         SetStatus(true);

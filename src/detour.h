@@ -14,6 +14,7 @@ public:
 	virtual void Destroy(IDetourCollection *pCollection);
 	virtual IDetourCollection *Detour(byte *addr, prototype_t *proto);
 
+    // Creates a new detour manager on the specified address. Returns corresponding collection.
 	IDetourCollection *CreateDetourCollection(byte *addr, prototype_t *proto);
 };
 
