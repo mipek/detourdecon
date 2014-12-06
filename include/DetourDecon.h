@@ -37,22 +37,22 @@ typedef unsigned char byte;
 #define DD_VERSION_MINOR 0
 
 #if defined(_WIN32)
-#	define	DD_SYS DD_SYS_WINDOWS
+#    define    DD_SYS DD_SYS_WINDOWS
 #else
-#	error	Unknown platform
+#    error    Unknown platform
 #endif
 
 // Macros
 #define DETOUR_SET_STATUS(ctx, x) \
-	ctx->status = x
+    ctx->status = x
 
 #define DETOUR_RETURN(ret, ctx, stat) \
-	DETOUR_SET_STATUS(ctx, stat); \
-	return ret
+    DETOUR_SET_STATUS(ctx, stat); \
+    return ret
 
 #define DETOUR_RETURN_VOID(ctx, stat) \
-	DETOUR_SET_STATUS(ctx, stat); \
-	return
+    DETOUR_SET_STATUS(ctx, stat); \
+    return
 
 #include <cstddef>
 #include <IDetour.h>
@@ -64,10 +64,10 @@ typedef unsigned char byte;
 class IDetourDecon
 {
 public:
-	virtual IDetourManager *DetourManager() =0;
-	virtual IMemHack *MemHack() =0;
+    virtual IDetourManager *DetourManager() =0;
+    virtual IMemHack *MemHack() =0;
 
-	static IDetourDecon *Singleton();
+    static IDetourDecon *Singleton();
 };
 
 #endif //_include_detourdecon_h_

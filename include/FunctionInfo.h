@@ -35,10 +35,10 @@
  */
 typedef enum CallConvention
 {
-	CallConv_cdecl = 0,
-	CallConv_stdcall,
-	//CallConv_fastcall,
-	CallConv_thiscall	/**< not supported yet. */
+    CallConv_cdecl = 0,
+    CallConv_stdcall,
+    //CallConv_fastcall,
+    CallConv_thiscall    /**< not supported yet. */
 } callConv_e;
 
 /**
@@ -46,58 +46,58 @@ typedef enum CallConvention
  */
 typedef enum ParameterType
 {
-    ParamType_POD,		/**< Plain old data. */
-	ParamType_ByRef,	/**< Pass by reference. */
-    ParamType_Float,	/**< Floating point. */
+    ParamType_POD,        /**< Plain old data. */
+    ParamType_ByRef,    /**< Pass by reference. */
+    ParamType_Float,    /**< Floating point. */
 } paramType_e;
 
 typedef struct Parameter
 {
-	paramType_e type;
-	int size;
+    paramType_e type;
+    int size;
 } param_t;
 
 typedef struct FuncProto
 {
-	callConv_e callconv;
-	int paramCount;
-	param_t *params;
-	param_t ret;
+    callConv_e callconv;
+    int paramCount;
+    param_t *params;
+    param_t ret;
 } prototype_t;
 
 template<int P_COUNT>
 class TPrototype
 {
-	param_t paraminf_[P_COUNT];
-	prototype_t proto_;
-	int idx_;
+    param_t paraminf_[P_COUNT];
+    prototype_t proto_;
+    int idx_;
 public:
-	TPrototype(callConv_e x):
-	  idx_(0)
-	{
-		proto_.callconv = x;
-		proto_.paramCount = P_COUNT;
-		proto_.params = paraminf_;
-		proto_.ret.size = 0;
-	}
-	void AddParam(int sz, paramType_e type)
-	{
-		paraminf_[idx_].size = sz;
-		paraminf_[idx_++].type = type;
-	}
-	void SetReturn(int sz, paramType_e type)
-	{
-		proto_.ret.size = sz;
-		proto_.ret.type = type;
-	}
-	void SetReturnNone()
-	{
-		proto_.ret.size = 0;
-	}
-	prototype_t *Prototype()
-	{
-		return proto_;
-	}
+    TPrototype(callConv_e x):
+      idx_(0)
+    {
+        proto_.callconv = x;
+        proto_.paramCount = P_COUNT;
+        proto_.params = paraminf_;
+        proto_.ret.size = 0;
+    }
+    void AddParam(int sz, paramType_e type)
+    {
+        paraminf_[idx_].size = sz;
+        paraminf_[idx_++].type = type;
+    }
+    void SetReturn(int sz, paramType_e type)
+    {
+        proto_.ret.size = sz;
+        proto_.ret.type = type;
+    }
+    void SetReturnNone()
+    {
+        proto_.ret.size = 0;
+    }
+    prototype_t *Prototype()
+    {
+        return proto_;
+    }
 };
 
 #endif //_include_functioninfo_h_

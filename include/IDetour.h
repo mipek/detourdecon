@@ -38,8 +38,8 @@ class IDetourCollection;
  */
 typedef enum eDetourType
 {
-	Detour_Pre = 0,
-	Detour_Post
+    Detour_Pre = 0,
+    Detour_Post
 } detourtype_e;
 
 /**
@@ -48,10 +48,10 @@ typedef enum eDetourType
  */
 typedef enum eDetourStatus
 {
-	Detour_Ignored,		/**< Don't take any action; call original function. */
-	Detour_Handled,		/**< Let other detours know we changed something. */
-	Detour_Override,	/**< Use my return but call original function. */
-	Detour_Skip			/**< Use my return, don't call original function. >*/
+    Detour_Ignored,        /**< Don't take any action; call original function. */
+    Detour_Handled,        /**< Let other detours know we changed something. */
+    Detour_Override,    /**< Use my return but call original function. */
+    Detour_Skip            /**< Use my return, don't call original function. >*/
 } detourstatus_e;
 
 /**
@@ -59,8 +59,8 @@ typedef enum eDetourStatus
  */
 typedef struct DetourContext
 {
-	detourstatus_e status;
-	//bool ignoreDetours;
+    detourstatus_e status;
+    //bool ignoreDetours;
 } detourctx_t;
 
 /**
@@ -78,76 +78,76 @@ public:
      */
     virtual byte *Callback() const =0;
 
-	/**
-	 * @brief Returns the detouring type
-	 *
-	 * @return				Detour type.
-	 */
-	virtual detourtype_e Type() const =0;
+    /**
+     * @brief Returns the detouring type
+     *
+     * @return                Detour type.
+     */
+    virtual detourtype_e Type() const =0;
 
-	/**
-	 * @brief Returns true when the detour is enabled.
-	 *
-	 * @return				True when the detour is disabled.
-	 */
-	virtual bool IsEnabled() const =0;
+    /**
+     * @brief Returns true when the detour is enabled.
+     *
+     * @return                True when the detour is disabled.
+     */
+    virtual bool IsEnabled() const =0;
 
-	/**
-	 * @brief Changes the detour status.
-	 *
-	 * @param	enabled		True to enable, False to disable the detour.
-	 */
-	virtual void SetStatus(bool enabled) =0;
+    /**
+     * @brief Changes the detour status.
+     *
+     * @param    enabled        True to enable, False to disable the detour.
+     */
+    virtual void SetStatus(bool enabled) =0;
 
-	void Enable()
-	{
-		SetStatus(true);
-	}
-	void Disable()
-	{
-		SetStatus(false);
-	}
+    void Enable()
+    {
+        SetStatus(true);
+    }
+    void Disable()
+    {
+        SetStatus(false);
+    }
 };
 
 class IDetourCollection
 {
 public:
-	/**
+    /**
      * @brief Returns the address of the detoured function.
      *
      * @return              Original function address.
      */
     virtual byte *Function() const =0;
 
-	/**
-	 * @brief Retrieves the trampoline function.
-	 *
-	 * @return				Trampoline function.
-	 */
-	virtual byte *Trampoline() const =0;
+    /**
+     * @brief Retrieves the trampoline function.
+     *
+     * @return                Trampoline function.
+     */
+    virtual byte *Trampoline() const =0;
 
-	/**
-	 * @brief Associate a detour with this collection.
-	 *
-	 * @param	cb			Callback
-	 * @param	type		Detouring type.
-	 */
-	virtual IDetour *AddDetour(byte *cb, detourtype_e type) =0;
+    /**
+     * @brief Associate a detour with this collection.
+     *
+     * @param    cb            Callback
+     * @param    type        Detouring type.
+     */
+    virtual IDetour *AddDetour(byte *cb, detourtype_e type) =0;
 
-	/**
-	 * @brief Removes the specified detour from collection and deletes it.
-	 *
-	 * @param	pDetour		Detour instance.
-	 * @return				True if successfull
-	 */
-	virtual bool RemoveDetour(IDetour *pDetour) =0;
+    /**
+     * @brief Removes the specified detour from collection and deletes it.
+     *
+     * @param    pDetour        Detour instance.
+     * @return                True if successfull
+     */
+    virtual bool RemoveDetour(IDetour *pDetour) =0;
 
-	/**
-	 * @brief Removes the specified detour from collection and deletes it.
-	 *
-	 * @param	idx			Index of the detour to remove
-	 */
-	virtual bool RemoveDetour(size_t idx) =0;
+    /**
+     * @brief Removes the specified detour from collection and deletes it.
+     *
+     * @param    idx            Index of the detour to remove
+     */
+    virtual bool RemoveDetour(size_t idx) =0;
 
     /**
      * @brief Retrieves a detour instance.
@@ -176,19 +176,19 @@ public:
      */
     virtual IDetourCollection *GetDetourCollection(byte *addr) =0;
 
-	/**
+    /**
      * @brief Destroys a detour collection.
      *
-     * @param	pCollection	Pointer to a detour collection.
+     * @param    pCollection    Pointer to a detour collection.
      */
-	virtual void Destroy(IDetourCollection *pCollection) =0;
+    virtual void Destroy(IDetourCollection *pCollection) =0;
 
-	/**
+    /**
      * @brief Detours the specified function to a detour manager.
      *
      * @param   addr        Function address.
-	 * @param	type		Detouring type.
-	 * @param	proto		Function prototype.
+     * @param    type        Detouring type.
+     * @param    proto        Function prototype.
      * @return              Associated detour collection or NULL if failed to create.
      */
     virtual IDetourCollection *Detour(byte *addr, prototype_t *proto) =0;

@@ -31,9 +31,9 @@
 /**
  * Called for each pattern in a scan.
  *
- * @brief	pattern		Pattern index.
- * @brief	ptr			Pointer to pattern found in memory. NULL if not found.
- * @brief	patched		True when the memory the pattern matched against was patched.
+ * @brief    pattern        Pattern index.
+ * @brief    ptr            Pointer to pattern found in memory. NULL if not found.
+ * @brief    patched        True when the memory the pattern matched against was patched.
  */
 typedef void (* OnPatternMatch_t)(int pattern, void *ptr, bool patched);
 
@@ -43,41 +43,41 @@ typedef void (* OnPatternMatch_t)(int pattern, void *ptr, bool patched);
 class IMemHack
 {
 public:
-	/**
-	 * Checks whether or not the specified memory range was patched.
-	 *
-	 * @param	addr		Base address in memory.
-	 * @param	len			Length in bytes.
-	 * @return				True when there was a patch in the specified region.
-	 */
-	virtual bool IsPatched(const void *addr, size_t len) =0;
+    /**
+     * Checks whether or not the specified memory range was patched.
+     *
+     * @param    addr        Base address in memory.
+     * @param    len            Length in bytes.
+     * @return                True when there was a patch in the specified region.
+     */
+    virtual bool IsPatched(const void *addr, size_t len) =0;
 
-	/**
-	 * Patches memory.
-	 *
-	 * @param	addr		Base address in memory.
-	 * @param	bytes		Patch data.
-	 * @param	len			Length of the patch.
-	 */
-	virtual void Patch(const void *addr, const void *bytes, size_t len) =0;
+    /**
+     * Patches memory.
+     *
+     * @param    addr        Base address in memory.
+     * @param    bytes        Patch data.
+     * @param    len            Length of the patch.
+     */
+    virtual void Patch(const void *addr, const void *bytes, size_t len) =0;
 
-	/**
-	 * Adds a new pattern to the current batch.
-	 *
-	 * @brief	pattern		Memory pattern.
-	 * @brief	len			Length of the pattern.
-	 * @brief	cb			Callback that is scheduled to be called after Scan() completed.
-	 * @return				Pattern index.
-	 */
-	virtual int AddPattern(const char *pattern, size_t len, OnPatternMatch_t cb) =0;
+    /**
+     * Adds a new pattern to the current batch.
+     *
+     * @brief    pattern        Memory pattern.
+     * @brief    len            Length of the pattern.
+     * @brief    cb            Callback that is scheduled to be called after Scan() completed.
+     * @return                Pattern index.
+     */
+    virtual int AddPattern(const char *pattern, size_t len, OnPatternMatch_t cb) =0;
 
-	/**
-	 * Scans for all added patterns in the specified module.
-	 *
-	 * @brief	module		Base address of a module.
-	 * @brief	len			Length of the module(in bytes).
-	 */
-	virtual void Scan(const void *module, size_t len) =0;
+    /**
+     * Scans for all added patterns in the specified module.
+     *
+     * @brief    module        Base address of a module.
+     * @brief    len            Length of the module(in bytes).
+     */
+    virtual void Scan(const void *module, size_t len) =0;
 };
 
 #endif //_include_imemhack_h_
