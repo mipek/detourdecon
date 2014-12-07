@@ -398,6 +398,16 @@ int DetourGen::Generate(byte *targetAddr, IDetourManager *pMngrSingleton, IDetou
 	return DETOURGEN_OK;
 }
 
+void DetourGen::Destroy(byte *trampoline)
+{
+	byte *detourmngr = FollowJump(trampoline);
+	if(detourmngr != trampoline)
+	{
+		g_Runtime.release(detourmngr);
+	}
+	g_Runtime.release(trampoline);
+}
+
 const char *DetourGen::GetErrorString(int error)
 {
 	static const char *DETOUR_ERROR_STR[] = {

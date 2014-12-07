@@ -87,13 +87,6 @@ public:
     virtual detourtype_e Type() const =0;
 
     /**
-     * @brief Changes the detour status.
-     *
-     * @param    enabled        True to enable, False to disable the detour.
-     */
-    virtual void SetStatus(bool enabled) =0;
-
-    /**
      * @brief Changes the type of the detour
      *
      * @param    type           New detour type
@@ -110,14 +103,10 @@ public:
 		return (Type() != Detour_Disabled) ? true : false;
 	}
 
-    void Enable()
-    {
-        SetStatus(true);
-    }
-    void Disable()
-    {
-        SetStatus(false);
-    }
+	void Disable()
+	{
+		SetType(Detour_Disabled);
+	}
 };
 
 class IDetourCollection

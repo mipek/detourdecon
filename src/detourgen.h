@@ -55,6 +55,7 @@ class DetourGen
 
 public:
 	static int Generate(byte *targetAddr, IDetourManager *pMngrSingleton, IDetourCollection *pCollection, prototype_t *proto, byte **trampoline);
+	static void Destroy(byte *trampoline);
 	static const char *GetErrorString(int error);
 };
 

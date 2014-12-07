@@ -8,10 +8,9 @@ class CDetour : public IDetour
 {
 	byte *detourFunc_;
 	detourtype_e type_;
-	bool enabled_;
 public:
 	CDetour(byte *addr, detourtype_e type):
-	  detourFunc_(addr), type_(type), enabled_(true)
+	  detourFunc_(addr), type_(type)
 	{
 	}
 
@@ -25,16 +24,6 @@ public:
 		return type_;
 	}
 
-	virtual bool IsEnabled() const
-	{
-		return enabled_;
-	}
-
-	virtual void SetStatus(bool enabled)
-	{
-		enabled_ = enabled;
-	}
-    
     virtual void SetType(detourtype_e type)
     {
         type_ = type;
@@ -47,7 +36,6 @@ class CDetourCollection : public IDetourCollection
 	byte *trampoline_;
 	Vector<IDetour*> detours_;
 	jmppatch_t patch_;
-	friend IDetourCollection *CDetourManager::CreateDetourCollection(byte*, prototype_t*);
 
 	CDetourCollection(byte *func):
 	  origfunc_(func)
@@ -62,6 +50,7 @@ public:
 		{
 			delete detours_[i];
 		}
+		DetourGen::Destroy(trampoline_);
 	}
 
 	virtual byte *Function() const
