@@ -23,7 +23,7 @@ public:
 	{
 		return type_;
 	}
-
+    
     virtual void SetType(detourtype_e type)
     {
         type_ = type;
@@ -36,6 +36,7 @@ class CDetourCollection : public IDetourCollection
 	byte *trampoline_;
 	Vector<IDetour*> detours_;
 	jmppatch_t patch_;
+	friend IDetourCollection *CDetourManager::CreateDetourCollection(byte*, prototype_t*);
 
 	CDetourCollection(byte *func):
 	  origfunc_(func)
