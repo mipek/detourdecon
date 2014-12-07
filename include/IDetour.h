@@ -39,7 +39,8 @@ class IDetourCollection;
 typedef enum eDetourType
 {
     Detour_Pre = 0,
-    Detour_Post
+    Detour_Post,
+	Detour_Disabled
 } detourtype_e;
 
 /**
@@ -86,13 +87,6 @@ public:
     virtual detourtype_e Type() const =0;
 
     /**
-     * @brief Returns true when the detour is enabled.
-     *
-     * @return                True when the detour is disabled.
-     */
-    virtual bool IsEnabled() const =0;
-
-    /**
      * @brief Changes the detour status.
      *
      * @param    enabled        True to enable, False to disable the detour.
@@ -106,6 +100,16 @@ public:
      */
     virtual void SetType(detourtype_e type) =0;
     
+	/**
+     * @brief Returns true when the detour is enabled.
+     *
+     * @return                True when the detour is disabled.
+     */
+    bool IsEnabled() const
+	{
+		return (Type() != Detour_Disabled) ? true : false;
+	}
+
     void Enable()
     {
         SetStatus(true);
